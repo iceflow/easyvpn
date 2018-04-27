@@ -64,7 +64,7 @@
   },
 
   "Resources" : {
-    "EIP1" :  {
+    "VPN_Server_EIP" :  {
       "Type" : "AWS::EC2::EIP",
       "Properties" : {
         "Domain" : "vpc"
@@ -75,7 +75,7 @@
       "Type" : "AWS::EC2::EIPAssociation",
       "Properties" : {
         "NetworkInterfaceId" : { "Ref" : "Eth0" },
-        "AllocationId" : { "Fn::GetAtt" : ["EIP1", "AllocationId"] }
+        "AllocationId" : { "Fn::GetAtt" : ["VPN_Server_EIP", "AllocationId"] }
       }
     },
 
@@ -107,8 +107,11 @@
         "Tags"     : [ {"Key" : "Name", "Value" : "EasyVPNServer" } ],
         "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
                        "#!/bin/bash -xe\n",
-                       "yum update -y curl\n",
-                       "curl https://s3-ap-southeast-1.amazonaws.com/leopublic/templates/EasyVPN/EasyVPN_Server_Setup.sh | /bin/bash\n"
+                       "yum install -y wget\n",
+                       "wget https://s3-ap-southeast-1.amazonaws.com/leopublic/templates/EasyVPN/EasyVPN_Server_Setup.sh\n",
+					   "/bin/bash ./EasyVPN_Server_Setup.sh "
+					   {"Fn::GetAtt" : [ "TestCustomResource", "PSK" ]},
+					   "\n"
         ]]}}
       }
     },
@@ -122,7 +125,85 @@
         "SubnetId"           : { "Ref" : "SubnetId" },
         "Tags"               : [ {"Key" : "Name", "Value" : "Interface 0"}, {"Key" : "Interface", "Value" : "eth0"} ]
       }
+    },
+
+    "TestCustomResource" : {
+      "Type" : "Custom::TestCustomResourceWithLambda",
+      "Properties" : {
+        "ServiceToken" : { "Fn::GetAtt" : ["TestLambdaFunction", "Arn"] }
+      }
+    },
+    "TestLambdaFunction" : {
+      "Type" : "AWS::Lambda::Function",
+      "Properties" : {
+        "Handler" : "index.handler",
+        "Role" : {"Fn::GetAtt" : ["TestLambdaExecutionRole", "Arn"]},
+        "Code" : {
+            "ZipFile" : { "Fn::Join" : ["\n", [
+              "from __future__ import print_function",
+              "import cfnresponse",
+			  "import random",
+			  "import string",
+              "print('Loading function')",
+              "def handler(event, context):",
+              "   outputData = {}",
+              "   outputData['PSK'] = ''.join([random.choice(string.hexdigits) for n in range(512)])",
+              "   cfnresponse.send(event, context, cfnresponse.SUCCESS, outputData)"
+            ]]}
+        },
+        "Timeout" : "10",
+        "MemorySize" : "256",
+        "Runtime" : "python2.7"
+      }
+    },
+    "TestLambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "cwlogs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "logs:CreateLogGroup",
+                  "Resource": { "Fn::Join" : [":", ["arn:aws:logs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "*" ]] }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    { "Fn::Join" : [":", ["arn:aws:logs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "log-group", "/aws/lambda/*", "*" ]] }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
     }
+
   },
 
   "Outputs" : {
@@ -130,9 +211,13 @@
       "Value" : { "Ref" : "EC2Instance" },
       "Description" : "Instance Id of newly created instance"
     },
-    "EIP1" : {
-      "Value" : { "Fn::Join" : [" ", [ "IP address", { "Ref" : "EIP1" }, "on subnet", {"Ref" : "SubnetId"}]]},
-      "Description" : "Primary public IP of Eth0"
+    "VPN_Server_EIP" : {
+      "Value" : {"Ref" : "VPN_Server_EIP" },
+      "Description" : "VPN Server EIP"
+    },
+    "PSK" : {
+      "Value" : { "Fn::GetAtt" : [ "TestCustomResource", "PSK" ] },
+	  "Description" : "VPN PSK"
     }
   }
 }
