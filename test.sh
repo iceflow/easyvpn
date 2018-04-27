@@ -6,6 +6,7 @@ BUCKET=leopublic
 REGION=cn-north-1
 
 FILES="EasyVPN_Client.template EasyVPN_Client_Setup.sh"
+#FILES="test.template"
 for F in $FILES; do
 	[ -f $F ] || continue
 
@@ -13,10 +14,8 @@ for F in $FILES; do
 	aws --profile $PROFILE s3 cp $F s3://$BUCKET/$KEY
 	aws --profile $PROFILE s3api put-object-acl --bucket $BUCKET --key $KEY --grant-read 'uri="http://acs.amazonaws.com/groups/global/AllUsers"'
 
-	echo "Upload done: https://s3-$REGION.amazonaws.com/$BUCKET/$KEY"
+	echo "Upload done: https://s3.$REGION.amazonaws.com.cn/$BUCKET/$KEY"
 done
-
-exit 0
 
 # AWS Global
 PROFILE=global_admin

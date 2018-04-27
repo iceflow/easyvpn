@@ -64,7 +64,7 @@
   },
 
   "Resources" : {
-    "VPN_Server_EIP" :  {
+    "VPNServerEIP" :  {
       "Type" : "AWS::EC2::EIP",
       "Properties" : {
         "Domain" : "vpc"
@@ -75,7 +75,7 @@
       "Type" : "AWS::EC2::EIPAssociation",
       "Properties" : {
         "NetworkInterfaceId" : { "Ref" : "Eth0" },
-        "AllocationId" : { "Fn::GetAtt" : ["VPN_Server_EIP", "AllocationId"] }
+        "AllocationId" : { "Fn::GetAtt" : ["VPNServerEIP", "AllocationId"] }
       }
     },
 
@@ -110,7 +110,7 @@
                        "#!/bin/bash -xe\n",
                        "yum install -y wget\n",
                        "wget https://s3-ap-southeast-1.amazonaws.com/leopublic/templates/EasyVPN/EasyVPN_Server_Setup.sh\n",
-					   "/bin/bash ./EasyVPN_Server_Setup.sh "
+					   "/bin/bash ./EasyVPN_Server_Setup.sh ",
 					   {"Fn::GetAtt" : [ "TestCustomResource", "PSK" ]},
 					   "\n"
         ]]}}
@@ -212,8 +212,8 @@
       "Value" : { "Ref" : "EC2Instance" },
       "Description" : "Instance Id of newly created instance"
     },
-    "VPN_Server_EIP" : {
-      "Value" : {"Ref" : "VPN_Server_EIP" },
+    "VPNServerIP" : {
+      "Value" : {"Ref" : "VPNServerEIP" },
       "Description" : "VPN Server EIP"
     },
     "PSK" : {

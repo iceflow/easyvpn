@@ -33,20 +33,24 @@ $1
 -----END OpenVPN Static key V1----- " > /data/openvpn/etc/static.key
 
 ##
+F=/data/openvpn/sbin/startup.sh
 echo "#/bin/bash
 killall openvpn
 /usr/sbin/openvpn --config /data/openvpn/etc/server-static.conf
-exit 0" > /data/openvpn/sbin/startup.sh
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+## IPtables
+/sbin/iptables -t nat -A POSTROUTING -o tun+ -j MASQUERADE
+/sbin/iptables -t nat -A POSTROUTING -o eth+ -j MASQUERADE
+
+exit 0" > $F
+chmod +x $F
 
 ##
 echo "/data/openvpn/sbin/startup.sh" >> /etc/rc.local
 
-##
-/usr/sbin/openvpn --config /data/openvpn/etc/server-static.conf
-
-
-
-
-echo "#test scripts to rc.local" >> /etc/rc.local
+## First run
+/data/openvpn/sbin/startup.sh
 
 exit 0
