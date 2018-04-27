@@ -1,0 +1,89 @@
+{
+  "Description" : "This is a sample template for lambda-backed custom resource. Runtime for Lambda function is python",
+  "Parameters" : {
+  },
+  "Resources":{
+    "TestCustomResource" : {
+      "Type" : "Custom::TestCustomResourceWithLambda",
+      "Properties" : {
+        "ServiceToken" : { "Fn::GetAtt" : ["TestLambdaFunction", "Arn"] }
+      }
+    },
+    "TestLambdaFunction" : {
+      "Type" : "AWS::Lambda::Function",
+      "Properties" : {
+        "Handler" : "index.handler",
+        "Role" : {"Fn::GetAtt" : ["TestLambdaExecutionRole", "Arn"]},
+        "Code" : {
+            "ZipFile" : { "Fn::Join" : ["\n", [
+              "from __future__ import print_function",
+              "import cfnresponse",
+			  "import random",
+			  "import string",
+              "print('Loading function')",
+              "def handler(event, context):",
+              "   outputData = {}",
+              "   outputData['PSK'] = ''.join([random.choice(string.hexdigits) for n in range(512)])",
+              "   cfnresponse.send(event, context, cfnresponse.SUCCESS, outputData)"
+            ]]}
+        },
+        "Timeout" : "10",
+        "MemorySize" : "256",
+        "Runtime" : "python2.7"
+      }
+    },
+    "TestLambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "cwlogs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "logs:CreateLogGroup",
+                  "Resource": { "Fn::Join" : [":", ["arn:aws:logs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "*" ]] }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    { "Fn::Join" : [":", ["arn:aws:logs", { "Ref" : "AWS::Region" }, { "Ref" : "AWS::AccountId" }, "log-group", "/aws/lambda/*", "*" ]] }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "Outputs" : {
+    "PSK" : {
+      "Value" : { "Fn::GetAtt" : [ "TestCustomResource", "PSK" ] },
+	  "Description" : "VPN PSK"
+    }
+  }
+}
