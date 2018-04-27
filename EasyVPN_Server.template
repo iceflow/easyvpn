@@ -104,6 +104,7 @@
           "NetworkInterfaceId" : {"Ref" : "Eth0" },
           "DeviceIndex" : "0"
         }],
+		"SourceDestCheck": "false",
         "Tags"     : [ {"Key" : "Name", "Value" : "EasyVPNServer" } ],
         "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
                        "#!/bin/bash -xe\n",
