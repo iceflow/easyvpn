@@ -6,7 +6,7 @@ Fast ways to setup VPN connections ( Do not use it in a commercial way )
 ## Objectives
   - [X] 1. CloudFormation template - Json format : 2018/04/28
   - [ ] 2. CloudFormation template - YAML format
-  - [X] 3. CloudFormation template - WebConsole support
+  - [X] 3. CloudFormation template - WebConsole support : 2018/04/28
   - [ ] 4. CloudFormation template - CLI support
   - [ ] 5. CloudFormation template - Python3 support
   - [ ] 6. Terraform format support
@@ -19,7 +19,7 @@ Fast ways to setup VPN connections ( Do not use it in a commercial way )
     - Server Template: 
       - AWS Global Tokyo: [https://s3-ap-southeast-1.amazonaws.com/leopublic/templates/EasyVPN/EasyVPN_Server.template](https://console.aws.amazon.com/cloudformation/home?region=ap-northeast-1#/stacks/new?stackName=EasyVPNServer&amp;templateURL=https://s3-ap-southeast-1.amazonaws.com/leopublic/templates/EasyVPN/EasyVPN_Server.template) 
 	- Select public subnet
-    - Get VPNServerIP, PSK from the output after completed lauch
+    - Get VPNServerIP, PSK from the output after completed launch
  - EasyVPN Client Setup
     - Support regions: Beijing, Ningxia
     - Client Template: 
