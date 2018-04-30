@@ -1,43 +1,56 @@
 #!/bin/bash
 
+
+FILES=""
+
 # AWS China
-PROFILE=default
-BUCKET=leopublic
-REGION=cn-north-1
+china_test() {
+	PROFILE=default
+	BUCKET=leopublic
+	REGION=cn-north-1
 
-FILES="EasyVPN_Client.template EasyVPN_Client_Setup.sh"
-#FILES="test.template"
-for F in $FILES; do
-	[ -f $F ] || continue
+	for F in $FILES; do
+		[ -f $F ] || continue
 
-	KEY="templates/EasyVPN/$F"
-	aws --profile $PROFILE s3 cp $F s3://$BUCKET/$KEY
-	aws --profile $PROFILE s3api put-object-acl --bucket $BUCKET --key $KEY --grant-read 'uri="http://acs.amazonaws.com/groups/global/AllUsers"'
+		KEY="templates/EasyVPN/$F"
+		aws --profile $PROFILE s3 cp $F s3://$BUCKET/$KEY
+		aws --profile $PROFILE s3api put-object-acl --bucket $BUCKET --key $KEY --grant-read 'uri="http://acs.amazonaws.com/groups/global/AllUsers"'
 
-	echo "Upload done: https://s3.$REGION.amazonaws.com.cn/$BUCKET/$KEY"
-done
+		echo "Upload done: https://s3.$REGION.amazonaws.com.cn/$BUCKET/$KEY"
+	done
+}
+
+
 
 # AWS Global
-PROFILE=global_admin
-BUCKET=leopublic
-REGION=ap-southeast-1
+global_test() {
+	PROFILE=global_admin
+	BUCKET=leopublic
+	REGION=ap-southeast-1
+
+	for F in $FILES; do
+		[ -f $F ] || continue
+
+		KEY="templates/EasyVPN/$F"
+		aws --profile $PROFILE s3 cp $F s3://$BUCKET/$KEY
+		aws --profile $PROFILE s3api put-object-acl --bucket $BUCKET --key $KEY --grant-read 'uri="http://acs.amazonaws.com/groups/global/AllUsers"'
+
+		echo "Upload done: https://s3-$REGION.amazonaws.com/$BUCKET/$KEY"
+	done
+}
 
 
-FILES="EasyVPN_Server.template EasyVPN_Server_Setup.sh"
-#FILES="LambdaBackedCustomResourceWithPythonRuntime.template"
 
+# 
+#FILES="EasyVPN_Server.template EasyVPN_Server_Setup.sh"
 
-#https://s3-ap-southeast-1.amazonaws.com/leopublic/templates/EasyVPN/EasyVPN_Server.template
+#FILES="EasyVPN_Server.yaml"
+#FILES="test.yaml"
 
-for F in $FILES; do
-	[ -f $F ] || continue
+#global_test
 
-	KEY="templates/EasyVPN/$F"
-	aws --profile $PROFILE s3 cp $F s3://$BUCKET/$KEY
-	aws --profile $PROFILE s3api put-object-acl --bucket $BUCKET --key $KEY --grant-read 'uri="http://acs.amazonaws.com/groups/global/AllUsers"'
-
-	echo "Upload done: https://s3-$REGION.amazonaws.com/$BUCKET/$KEY"
-done
-
+#FILES="EasyVPN_Client.template EasyVPN_Client_Setup.sh"
+FILES="EasyVPN_Client.yaml"
+china_test
 
 exit 0
