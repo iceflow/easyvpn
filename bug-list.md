@@ -1,10 +1,10 @@
 
 # Know Bugs
- - [ ] Duplicated processes when first run, won't occur after reboot
+ - [X] Duplicated processes when first run, won't occur after reboot
 
-Submitted date: 2017/04/29
-Solved date:
-Reason:
+Submitted date: 2018/04/29
+Solved date: 2018/04/30
+Reason: Cloud-Init run before rc.local. Don't need to run rc.local content about openvpn again
 
 ```Bash
 [root@ip-172-31-9-127 ~]# ps aux | grep openvpn

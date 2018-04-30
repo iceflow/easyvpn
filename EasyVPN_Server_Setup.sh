@@ -51,6 +51,6 @@ chmod +x $F
 echo "/data/openvpn/sbin/startup.sh" >> /etc/rc.local
 
 ## First run
-/data/openvpn/sbin/startup.sh
+#/data/openvpn/sbin/startup.sh
 
 exit 0
