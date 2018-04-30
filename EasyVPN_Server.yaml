@@ -123,16 +123,15 @@ Resources:
         - Key: Name
           Value: EasyVPNServer
       UserData:
-        Fn::Base64:
-          Fn::Sub:
-            # Inital EasyVPN Server environment
-            - |
-              #!/bin/bash -xe
-              yum install -y wget
-              wget https://s3-ap-southeast-1.amazonaws.com/leopublic/templates/EasyVPN/EasyVPN_Server_Setup.sh
-              /bin/bash ./EasyVPN_Server_Setup.sh ${PSK}
-            - 
-              PSK: !GetAtt TestCustomResource.PSK
+        Fn::Base64: !Sub
+          # Inital EasyVPN Server environment
+          - |
+            #!/bin/bash -xe
+            yum install -y wget
+            wget https://s3-ap-southeast-1.amazonaws.com/leopublic/templates/EasyVPN/EasyVPN_Server_Setup.sh
+            /bin/bash ./EasyVPN_Server_Setup.sh ${PSK}
+          - 
+            PSK: !GetAtt TestCustomResource.PSK
   Eth0:
     Type: 'AWS::EC2::NetworkInterface'
     Properties:
