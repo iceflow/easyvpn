@@ -4,10 +4,10 @@ Fast ways to setup VPN connections ( Do not use it in a commercial way )
 ![EasyVPN Architedcture](images/EasyVPNArch.png)
 
 ## Objectives
-  - [X] 1. CloudFormation template - Json format : 2018/04/28
-  - [X] 2. CloudFormation template - YAML format : 2018/04/30
+  - [X] 1. [CloudFormation template](README.md#1-cloudformation-template) - Json format : 2018/04/28
+  - [X] 2. [CloudFormation template](README.md#1-cloudformation-template) - YAML format : 2018/04/30
   - [X] 3. CloudFormation template - WebConsole support : 2018/04/28
-  - [X] 4. CloudFormation template - CLI support : 2018/05/01
+  - [X] 4. [CloudFormation template - CLI support](README.md#4-cloudformation-template---cli-support) : 2018/05/01
   - [ ] 5. CloudFormation template - Python3 support
   - [ ] 6. Terraform format support
   - [ ] 7. Docker support
