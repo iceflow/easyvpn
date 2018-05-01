@@ -39,3 +39,8 @@ Fast ways to setup VPN connections ( Do not use it in a commercial way )
 
 
 
+## References
+- [AWS Cloudformation Templates](https://github.com/awslabs/aws-cloudformation-templates)
+- [Using the AWS Command Line Interface](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-using-cli.html)
+
+
