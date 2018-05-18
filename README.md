@@ -50,8 +50,8 @@ Fast ways to setup VPN connections ( Do not use it in a commercial way )
     - Select public subnet
  - Modify related routing tables in the Client VPC
  - (Option) Modify client dns server to 8.8.8.8 to better resolve global domain names.
-   ``` cat /etc/resolve.conf
-   ...
+   ``` Bash
+   #cat /etc/resolve.conf
    nameserver 8.8.8.8
    ...
    ```
