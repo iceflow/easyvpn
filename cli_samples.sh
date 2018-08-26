@@ -56,6 +56,8 @@ client_setup() {
 CHECK_FILES="EasyVPN_Server.template EasyVPN_Client.template EasyVPN_Server.yaml EasyVPN_Client.yaml"
 validate_templates
 
+exit 0
+
 PROFILE=global_admin
 REGION=ap-northeast-2
 server_setup
